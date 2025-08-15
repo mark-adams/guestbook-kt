@@ -14,6 +14,9 @@ import kotlinx.html.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicLong
+import javax.xml.parsers.DocumentBuilderFactory
+import org.xml.sax.InputSource
+import java.io.StringReader
 
 object GuestbookData {
     private val _hitCounter = AtomicLong(0)
@@ -61,6 +64,19 @@ suspend fun ApplicationCall.handleGuestbookGet() {
 suspend fun ApplicationCall.handleGuestbookPost() {
     val formParameters = receiveParameters()
     val name = formParameters["name"]?.trim()
+    
+    try{
+        // We should make sure the XML is well-formed even though we aren't using it yet.
+        val xml = formParameters["xml"]?.trim()
+        val factory = DocumentBuilderFactory.newInstance()
+        val builder = factory.newDocumentBuilder()
+        val inputSource = InputSource(StringReader(xml))
+        builder.parse(inputSource)
+    } catch(exception: Exception) {
+        // Handle XML parsing error with a 500
+        respond(HttpStatusCode.InternalServerError, "Invalid XML format")
+        return
+    }
     
     if (!name.isNullOrBlank()) {
         val signature = Signature(name, LocalDateTime.now())
