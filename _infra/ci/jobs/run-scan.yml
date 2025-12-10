@@ -1,0 +1,7 @@
+# Copied originally from https://git.musta.ch/airbnb/jorb-global-jobs/blob/master/_infra/ci/jobs/seccheck/seccheck.yml
+image: 172631448019.dkr.ecr.us-east-1.amazonaws.com/seccheck-ci:staging
+steps:
+  - label: Run scan
+    type: run
+    command: |
+      echo "Hello!"

@@ -1,0 +1,3 @@
+jobs:
+- name: Seccheck Testing
+  path: _infra/ci/jobs/run-scan.yml
